@@ -1,4 +1,4 @@
-/**
+/*
  *
  *                                  Apache License
  *                            Version 2.0, January 2004
@@ -202,50 +202,21 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package io.github.deersunny.socketio.spring.starter.boot;
+package io.github.deersunny.socketio.spring.starter;
 
-import com.corundumstudio.socketio.SocketIOServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
+import com.corundumstudio.socketio.Configuration;
 
 /**
- * 服务自启
- * 让Spring将其添加为一个可注入的组件，实现CommandLineRunner接口代表在Spring启动后服务就跟着启动。Order则表示注入优先级，数字越小注入的顺序靠前，优先级高
- * @author DeerSunny
+ * SocketIOServer 自定义配置接口
+ * Customize the SocketIOServer configuration interface.
+ * @author 秋辞未寒
  */
-@Component
-@Order(1)
-public class NettySocketIOServerAutoBootstrapApplication implements CommandLineRunner {
+@FunctionalInterface
+public interface NettySocketIOServerAutoConfigurationCustomizer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NettySocketIOServerAutoBootstrapApplication.class);
-
-    private final SocketIOServer server;
-
-    public NettySocketIOServerAutoBootstrapApplication(@Autowired(required = false) SocketIOServer socketIOServer) {
-        this.server = socketIOServer;
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        if (server != null) {
-            LOG.info("|============================================================|");
-            LOG.info("| Netty Socket.io server is starting......                   |");
-            server.start();
-            LOG.info("| Netty Socket.io server started successfully.               |");
-            LOG.info("|============================================================|");
-
-            // 添加停机钩子，让应用在退出时释放资源
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                LOG.info("|============================================================|");
-                LOG.info("| Netty Socket.io server is stopping......                   |");
-                server.stop();
-                LOG.info("| Netty Socket.io server stopped successfully.               |");
-                LOG.info("|============================================================|");
-            }));
-        }
-    }
+    /**
+     * Customize the NettySocketIO configuration.
+     * @param configuration the {@link Configuration} to customize
+     */
+    void customize(final Configuration configuration);
 }

@@ -1,4 +1,4 @@
-/**
+/*
  *
  *                                  Apache License
  *                            Version 2.0, January 2004
@@ -215,7 +215,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * @author DeerSunny
+ * @author 秋辞未寒
  */
 public class RedisTemplateStoreFactory extends BaseStoreFactory {
 

@@ -1,4 +1,4 @@
-/**
+/*
  *
  *                                  Apache License
  *                            Version 2.0, January 2004
@@ -209,37 +209,37 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.SpringAnnotationScanner;
 import com.corundumstudio.socketio.listener.ExceptionListener;
 import com.corundumstudio.socketio.store.StoreFactory;
-import io.netty.channel.epoll.Epoll;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
 /**
- * @author DeerSunny
+ * SocketIOServer 自动配置
+ * SocketIOServer autoconfiguration.
+ * @author 秋辞未寒
  */
-@Configuration
+@Slf4j
+@AutoConfiguration
 @ConditionalOnClass({SocketIOServer.class, SpringAnnotationScanner.class})
 @ConditionalOnProperty(prefix = NettySocketIOServerProperties.PREFIX, value = "enabled", havingValue = "true")
 @EnableConfigurationProperties({NettySocketIOServerProperties.class})
 public class NettySocketIOServerAutoConfiguration {
-    private static final Logger LOG = LoggerFactory.getLogger(NettySocketIOServerAutoConfiguration.class);
 
-    @Autowired
-    private NettySocketIOServerProperties config;
-
-    @Autowired(required = false)
-    private List<NettySocketIOAutoConfigurationCustomizer> nettySocketIOAutoConfigurationCustomizers;
-
-    @Bean(destroyMethod = "stop")
-    public SocketIOServer socketIOServer(@Autowired(required = false) AuthorizationListener authorizationListener, @Autowired(required = false) ExceptionListener exceptionListener, @Autowired(required = false) StoreFactory storeFactory) {
+    @Bean(initMethod = "start", destroyMethod = "stop")
+    @ConditionalOnMissingBean
+    public SocketIOServer socketIOServer(NettySocketIOServerProperties config,
+            @Autowired(required = false) AuthorizationListener authorizationListener,
+            @Autowired(required = false) ExceptionListener exceptionListener,
+            @Autowired(required = false) StoreFactory storeFactory,
+            @Autowired(required = false) List<NettySocketIOServerAutoConfigurationCustomizer> nettySocketIOServerAutoConfigurationCustomizers) {
 
         if (authorizationListener != null) {
             config.setAuthorizationListener(authorizationListener);
@@ -253,15 +253,10 @@ public class NettySocketIOServerAutoConfiguration {
             config.setStoreFactory(storeFactory);
         }
 
-        // check Epoll availability.
-        if (config.isUseLinuxNativeEpoll() && !Epoll.isAvailable()) {
-            LOG.warn("Epoll library not available, disabling native epoll");
-            config.setUseLinuxNativeEpoll(false);
-        }
-
         // If custom configuration is not empty.
-        if (!CollectionUtils.isEmpty(nettySocketIOAutoConfigurationCustomizers)) {
-            for (NettySocketIOAutoConfigurationCustomizer customizer : nettySocketIOAutoConfigurationCustomizers) {
+        if (!CollectionUtils.isEmpty(nettySocketIOServerAutoConfigurationCustomizers)) {
+            for (NettySocketIOServerAutoConfigurationCustomizer customizer : nettySocketIOServerAutoConfigurationCustomizers) {
+                log.info("Initialize the SocketIOServer using [{}].",customizer.getClass().getName());
                 customizer.customize(config);
             }
         }

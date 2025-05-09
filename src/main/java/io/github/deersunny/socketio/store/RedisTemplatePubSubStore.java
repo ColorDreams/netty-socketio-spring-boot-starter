@@ -1,4 +1,4 @@
-/**
+/*
  *
  *                                  Apache License
  *                            Version 2.0, January 2004
@@ -219,7 +219,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * @author DeerSunny
+ * @author 秋辞未寒
  */
 @SuppressWarnings("unchecked")
 public class RedisTemplatePubSubStore implements PubSubStore {
@@ -253,6 +253,7 @@ public class RedisTemplatePubSubStore implements PubSubStore {
                 listener.onMessage((T) msg);
             }
         };
+
         redisMessageListenerContainer.addMessageListener(messageListener, new ChannelTopic(name));
         Queue<MessageListener> queue = queues.get(name);
         if (queue == null) {

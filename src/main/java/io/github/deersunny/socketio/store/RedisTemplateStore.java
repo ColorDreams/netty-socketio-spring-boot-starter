@@ -1,4 +1,4 @@
-/**
+/*
  *
  *                                  Apache License
  *                            Version 2.0, January 2004
@@ -208,11 +208,10 @@ import com.corundumstudio.socketio.store.Store;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.Map;
 import java.util.UUID;
 
 /**
- * @author DeerSunny
+ * @author 秋辞未寒
  */
 @SuppressWarnings("unchecked")
 public class RedisTemplateStore implements Store {
@@ -230,11 +229,7 @@ public class RedisTemplateStore implements Store {
 
     @Override
     public <T> T get(String key) {
-        Map<String, Object> entries = boundHashOperations.entries();
-        if (entries != null) {
-            return (T) entries.get(key);
-        }
-        return null;
+        return (T) boundHashOperations.get(key);
     }
 
     @Override

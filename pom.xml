@@ -5,16 +5,16 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.4</version>
+        <version>3.4.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>io.github.deersunny</groupId>
     <artifactId>netty-socketio-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>The project is NettySocketIO Spring Boot Starter</description>
-    <url>https://github.com/DeerSunny/${project.artifactId}</url>
+    <url>https://github.com/ColorDreams/${project.artifactId}</url>
     <packaging>jar</packaging>
 
     <licenses>
@@ -25,60 +25,31 @@
         </license>
     </licenses>
 
-    <developers>
-        <developer>
-            <id>DeerSunny</id>
-            <name>DeerSunny</name>
-            <email>505073804@qq.com</email>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>+8</timezone>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:git://github.com/DeerSunny/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/DeerSunny/${project.artifactId}.git</developerConnection>
-        <url>https://github.com/DeerSunny/${project.artifactId}</url>
-    </scm>
-
-    <issueManagement>
-        <system>GitHub</system>
-        <url>https://github.com/DeerSunny/${project.artifactId}/issues</url>
-    </issueManagement>
-
     <properties>
+        <!-- project java version -->
+        <java.version>17</java.version>
         <!-- project encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!-- project dependency plugin version -->
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
-        <sign-maven-plugin.version>0.3.1</sign-maven-plugin.version>
-        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-        <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
-        <license-maven-plugin.version>4.1</license-maven-plugin.version>
-
         <!-- project dependency package version -->
-        <spring-boot.version>2.5.4</spring-boot.version>
-        <netty-socketio.version>1.7.19</netty-socketio.version>
-    </properties>
+        <spring-boot.version>3.4.5</spring-boot.version>
+        <netty-socketio.version>2.0.13</netty-socketio.version>
 
-    <repositories>
-        <repository>
-            <id>aliyun-maven</id>
-            <name>Aliyun Maven Public Repository</name>
-            <url>https://maven.aliyun.com/repository/public</url>
-        </repository>
-    </repositories>
+        <!-- project dependency plugin version -->
+        <apache-maven-plugins.groupId>org.apache.maven.plugins</apache-maven-plugins.groupId>
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+        <license-maven-plugin.version>5.0.0</license-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- spring-hooks-dependencies dependency -->
+            <!-- https://central.sonatype.com/artifact/org.springframework.boot/spring-boot-dependencies -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -86,23 +57,22 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- netty-socketio dependency -->
+            <!-- https://central.sonatype.com/artifact/com.corundumstudio.socketio/netty-socketio -->
+            <dependency>
+                <groupId>com.corundumstudio.socketio</groupId>
+                <artifactId>netty-socketio</artifactId>
+                <version>${netty-socketio.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-
-        <!-- netty-socketio dependency -->
-        <!-- https://mvnrepository.com/artifact/com.corundumstudio.socketio/netty-socketio -->
-        <dependency>
-            <groupId>com.corundumstudio.socketio</groupId>
-            <artifactId>netty-socketio</artifactId>
-            <version>${netty-socketio.version}</version>
-        </dependency>
-
-        <!-- spring-boot-starter-data-redis dependency -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -114,6 +84,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.corundumstudio.socketio</groupId>
+            <artifactId>netty-socketio</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 
@@ -127,61 +107,117 @@
         </resources>
 
         <plugins>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
+            <!-- 编译插件 -->
+            <!-- compiler plugin -->
+            <!-- https://central.sonatype.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${maven-jar-plugin.version}</version>
-                <configuration>
-                    <skipIfEmpty>true</skipIfEmpty>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                        <manifestEntries>
-                            <Build-Time>${maven.build.timestamp}</Build-Time>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+                <groupId>${apache-maven-plugins.groupId}</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>${compiler.version}</source>
-                    <target>${compiler.version}</target>
-                    <!--                    <release>${release.version}</release>-->
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    <optimize>true</optimize>
-                    <showDeprecation>true</showDeprecation>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                            <version>${spring-boot.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
 
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
+            <!-- jar源码包生成插件 -->
+            <!-- build source package plugin -->
+            <!-- https://central.sonatype.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>${maven-release-plugin.version}</version>
+                <groupId>${apache-maven-plugins.groupId}</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
                 <configuration>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <useReleaseProfile>true</useReleaseProfile>
-                    <releaseProfiles>release</releaseProfiles>
-                    <goals>deploy</goals>
+                    <!-- 源码包随着项目打成的jar包安装到本地仓库或者私服、公服 -->
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- javadoc生成插件 -->
+            <!-- gen javadoc plugin -->
+            <!-- https://central.sonatype.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+            <plugin>
+                <groupId>${apache-maven-plugins.groupId}</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- 禁用严格语法检测 -->
+                    <doclint>none</doclint>
                 </configuration>
             </plugin>
 
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
+            <!-- GPG签名插件 -->
+            <!-- gpg sign plugin -->
+            <!-- https://central.sonatype.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>${maven-deploy-plugin.version}</version>
+                <groupId>${apache-maven-plugins.groupId}</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven-gpg-plugin.version}</version>
+                <configuration>
+                    <gpgArguments>
+                        <arg>--pinentry-mode</arg>
+                        <arg>loopback</arg>
+                    </gpgArguments>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 发布到maven仓库中心插件 -->
+            <!-- publishing to central server plugin -->
+            <!-- https://central.sonatype.com/artifact/org.sonatype.central/central-publishing-maven-plugin -->
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>${central-publishing-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
             </plugin>
 
             <!-- 开源协议管理插件 -->
+            <!-- gen code license plugin -->
+            <!-- https://central.sonatype.com/artifact/com.mycila/license-maven-plugin -->
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -193,18 +229,22 @@
                     <failIfMissing>true</failIfMissing>
                     <aggregate>false</aggregate>
                     <includes>
-                        <include>src/main/java/com/github/deersunny/socketio/</include>
+                        <include>src/main/java/**/*.java</include>
                     </includes>
+                    <useDefaultExcludes>true</useDefaultExcludes>
                     <excludes>
+                        <exclude>**/generated/**</exclude>
                         <exclude>target/**</exclude>
                     </excludes>
-                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <useDefaultMapping>true</useDefaultMapping>
                     <mapping>
-                        <java>JAVADOC_STYLE</java>
+                        <java>SLASHSTAR_STYLE</java>
                     </mapping>
                     <strictCheck>true</strictCheck>
-                    <useDefaultMapping>true</useDefaultMapping>
-                    <encoding>UTF-8</encoding>
+                    <failIfMissing>true</failIfMissing>
+                    <aggregate>true</aggregate>
+                    <strictCheck>true</strictCheck>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
                 <executions>
                     <execution>
@@ -214,9 +254,56 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>public</id>
+            <name>huawei nexus</name>
+            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>public</id>
+            <name>huawei nexus</name>
+            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <developers>
+        <developer>
+            <id>ColorDreams</id>
+            <name>ColorDreams</name>
+            <email>505073804@qq.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/ColorDreams/${project.artifactId}/issues</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:git://github.com/ColorDreams/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/ColorDreams/${project.artifactId}.git</developerConnection>
+        <url>https://github.com/ColorDreams/${project.artifactId}</url>
+    </scm>
 
     <distributionManagement>
         <snapshotRepository>
@@ -231,114 +318,4 @@
         </repository>
     </distributionManagement>
 
-    <profiles>
-        <profile>
-            <id>JDK8</id>
-            <properties>
-                <!-- project compiler config -->
-                <compiler.version>1.8</compiler.version>
-                <javadoc.version>1.8</javadoc.version>
-                <release.version>1.8</release.version>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>JDK11</id>
-            <properties>
-                <!-- project compiler config -->
-                <compiler.version>11</compiler.version>
-                <javadoc.version>11</javadoc.version>
-                <release.version>11</release.version>
-            </properties>
-        </profile>
-
-        <!-- 以下配置用于发布到 maven 中央仓库使用，如不需要，无须勾选 -->
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-
-                    <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
-                    <!-- 用于生成源码jar包 -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>${maven-source-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>attach-source</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
-                    <!-- 用于生成javadoc -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven-javadoc-plugin.version}</version>
-                        <configuration>
-                            <charset>${project.build.sourceEncoding}</charset>
-                            <encoding>${project.build.sourceEncoding}</encoding>
-                            <docencoding>${project.build.sourceEncoding}</docencoding>
-                            <source>${javadoc.version}</source>
-                            <level>public</level>
-                            <!-- 关闭doclint检查，避免注解检查不通过 -->
-                            <doclint>none</doclint>
-                            <quiet>true</quiet>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- https://mvnrepository.com/artifact/org.simplify4u.plugins/sign-maven-plugin -->
-                    <!-- 使用GPG插件对组件进行自动签名 -->
-                    <plugin>
-                        <groupId>org.simplify4u.plugins</groupId>
-                        <artifactId>sign-maven-plugin</artifactId>
-                        <version>${sign-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>${nexus-staging-maven-plugin.version}</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                            <!-- <sslAllowAll>true</sslAllowAll> -->
-                            <stagingProgressPauseDurationSeconds>60</stagingProgressPauseDurationSeconds>
-                            <stagingProgressTimeoutMinutes>20</stagingProgressTimeoutMinutes>
-                            <detectBuildFailures>true</detectBuildFailures>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

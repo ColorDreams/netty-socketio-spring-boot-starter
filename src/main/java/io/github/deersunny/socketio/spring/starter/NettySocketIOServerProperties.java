@@ -1,4 +1,4 @@
-/**
+/*
  *
  *                                  Apache License
  *                            Version 2.0, January 2004
@@ -205,40 +205,18 @@
 package io.github.deersunny.socketio.spring.starter;
 
 import com.corundumstudio.socketio.Configuration;
-import com.corundumstudio.socketio.SocketConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-
 /**
- *
- * @author DeerSunny
+ * SocketIOServer 配置属性类
+ * SocketIOServer Config properties
+ * @author 秋辞未寒
  */
+@Data
+@EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(NettySocketIOServerProperties.PREFIX)
 public class NettySocketIOServerProperties extends Configuration {
-    public static final String PREFIX = "spring.netty.socketio.server";
-
-    /**
-     * Is enable NettySocketIO server
-     * TODO: Default Not Enabled
-     */
-    private boolean isEnabled = false;
-
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
-
-    @Override
-    public SocketConfig getSocketConfig() {
-        return super.getSocketConfig();
-    }
-
-    @Override
-    public void setSocketConfig(SocketConfig socketConfig) {
-        super.setSocketConfig(socketConfig);
-    }
-
+    public static final String PREFIX = "socketio.server";
 }
