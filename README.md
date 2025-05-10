@@ -1,17 +1,17 @@
 ### 介绍
 
-> 基于 [netty-socketio 2.](https://github.com/mrniko/netty-socketio) 的 SpringBoot 快速集成自动化配置包。
+> 基于 [netty-socketio 2.X](https://github.com/mrniko/netty-socketio) 的 SpringBoot 快速集成自动化配置包。
 
 ### 项目部分实现参考自
-- [redisson-spring-boot-starter](https://github.com/redisson/redisson/tree/master/redisson-spring-boot-starter)
-- [netty-socketio](https://github.com/mrniko/netty-socketio) 
-- [socketio-spring-boot-starter](https://github.com/hiwepy/socketio-spring-boot-starter)
+- [socketio-spring-boot-starter 基于 netty-socketio 2.x 开源项目实现的Socket项目整合](https://github.com/hiwepy/socketio-spring-boot-starter)
+- [redisson-spring-boot-starter Redisson官方SpringBoot starter包](https://github.com/redisson/redisson/tree/master/redisson-spring-boot-starter)
+- [netty-socketio](https://github.com/mrniko/netty-socketio)
 
 ### 使用
 
 #### 1、添加依赖
 ```xml
-<!-- https://mvnrepository.com/artifact/io.github.deersunny/netty-socketio-spring-boot-starter -->
+<!-- https://central.sonatype.com/artifact/io.github.deersunny/netty-socketio-spring-boot-starter -->
 <dependency>
     <groupId>io.github.deersunny</groupId>
     <artifactId>netty-socketio-spring-boot-starter</artifactId>
@@ -21,7 +21,7 @@
 
 #### 2、在 SpringBoot 的配置文件中加入以下配置（参考自：[socketio-spring-boot-starter](https://github.com/hiwepy/socketio-spring-boot-starter/blob/master/README.md) ）
 
-```yaml
+```yml
 socketio:
   server:
     enabled: true
