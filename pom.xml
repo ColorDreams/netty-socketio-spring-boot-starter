@@ -12,11 +12,10 @@
     <groupId>io.github.deersunny</groupId>
     <artifactId>netty-socketio-spring-boot-starter</artifactId>
     <version>2.0.0</version>
-    <name>${project.groupId}:${project.artifactId}</name>
+    <name>netty-socketio-spring-boot-starter</name>
     <description>The project is NettySocketIO Spring Boot Starter</description>
     <url>https://github.com/ColorDreams/${project.artifactId}</url>
     <packaging>jar</packaging>
-
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -24,6 +23,17 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+    <developers>
+        <developer>
+            <name>ColorDreams</name>
+            <email>505073804@qq.com</email>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+    <scm>
+        <url>https://github.com/ColorDreams/${project.artifactId}</url>
+    </scm>
+    <issueManagement/>
 
     <properties>
         <!-- project java version -->
@@ -224,18 +234,10 @@
                 <version>${license-maven-plugin.version}</version>
                 <configuration>
                     <basedir>${basedir}</basedir>
-                    <header>${basedir}/LICENSE-2.0.txt</header>
                     <quiet>false</quiet>
                     <failIfMissing>true</failIfMissing>
                     <aggregate>false</aggregate>
-                    <includes>
-                        <include>src/main/java/**/*.java</include>
-                    </includes>
                     <useDefaultExcludes>true</useDefaultExcludes>
-                    <excludes>
-                        <exclude>**/generated/**</exclude>
-                        <exclude>target/**</exclude>
-                    </excludes>
                     <useDefaultMapping>true</useDefaultMapping>
                     <mapping>
                         <java>SLASHSTAR_STYLE</java>
@@ -245,6 +247,27 @@
                     <aggregate>true</aggregate>
                     <strictCheck>true</strictCheck>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>${basedir}/LICENSE-2.0.txt</header>
+<!--                            <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>-->
+                            <excludes>
+                                <exclude>**/README</exclude>
+                                <exclude>src/test/resources/**</exclude>
+                                <exclude>src/main/resources/**</exclude>
+                                <exclude>**/generated/**</exclude>
+                                <exclude>target/**</exclude>
+                            </excludes>
+                            <includes>
+                                <include>src/main/java/**/*.java</include>
+                            </includes>
+                        </licenseSet>
+                    </licenseSets>
+                    <properties>
+                        <owner>秋辞未寒</owner>
+                        <email>545073804@qq.com</email>
+                        <year>2025</year>
+                    </properties>
                 </configuration>
                 <executions>
                     <execution>
@@ -281,41 +304,5 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-
-    <developers>
-        <developer>
-            <id>ColorDreams</id>
-            <name>ColorDreams</name>
-            <email>505073804@qq.com</email>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>+8</timezone>
-        </developer>
-    </developers>
-
-    <issueManagement>
-        <system>GitHub</system>
-        <url>https://github.com/ColorDreams/${project.artifactId}/issues</url>
-    </issueManagement>
-
-    <scm>
-        <connection>scm:git:git://github.com/ColorDreams/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/ColorDreams/${project.artifactId}.git</developerConnection>
-        <url>https://github.com/ColorDreams/${project.artifactId}</url>
-    </scm>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <name>OSS Snapshots Repositories</name>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <name>OSS Staging Repositories</name>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
 </project>
