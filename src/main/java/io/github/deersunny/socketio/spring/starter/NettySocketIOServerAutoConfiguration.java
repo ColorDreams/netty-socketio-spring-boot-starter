@@ -212,6 +212,7 @@ import com.corundumstudio.socketio.store.StoreFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -265,7 +266,9 @@ public class NettySocketIOServerAutoConfiguration {
     }
 
     @Bean
-    public SpringAnnotationScanner springAnnotationScanner(SocketIOServer socketIOServer) {
+    @ConditionalOnMissingBean
+    @ConditionalOnBean(SocketIOServer.class)
+    public static SpringAnnotationScanner springAnnotationScanner(SocketIOServer socketIOServer) {
         return new SpringAnnotationScanner(socketIOServer);
     }
 
