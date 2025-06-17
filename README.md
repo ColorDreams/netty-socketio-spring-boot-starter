@@ -15,7 +15,7 @@
 <dependency>
     <groupId>io.github.deersunny</groupId>
     <artifactId>netty-socketio-spring-boot-starter</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
@@ -25,6 +25,8 @@
 socketio:
   server:
     enabled: true
+    ## 自动启动 SocketIoServer 服务
+    auto-startup-server: true
     ## 服务上下文地址，该地址与Nginx负载地址适配 /socket.io
     context: /socket.io
     ## host在本地测试可以设置为localhost或者本机IP，在Linux服务器跑可换成服务器IP
