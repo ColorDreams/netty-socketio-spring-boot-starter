@@ -204,48 +204,17 @@
  */
 package io.github.deersunny.socketio.store;
 
-import com.corundumstudio.socketio.store.Store;
-import com.corundumstudio.socketio.store.pubsub.BaseStoreFactory;
-import com.corundumstudio.socketio.store.pubsub.PubSubStore;
-import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
-import java.util.Map;
-import java.util.UUID;
-
 /**
+ * @deprecated This class will be removed in the next version,please use {@link io.github.deersunny.socketio.spring.store.redis.RedisTemplateStoreFactory}
  * @author 秋辞未寒
  */
-public class RedisTemplateStoreFactory extends BaseStoreFactory {
-
-    private final RedisTemplate<String, Object> redisTemplate;
-
-    private final PubSubStore pubSubStore;
+@Deprecated
+public class RedisTemplateStoreFactory extends io.github.deersunny.socketio.spring.store.redis.RedisTemplateStoreFactory {
 
     public RedisTemplateStoreFactory(RedisTemplate<String, Object> redisTemplate, RedisMessageListenerContainer listenerContainer) {
-        this.redisTemplate = redisTemplate;
-        this.pubSubStore = new RedisTemplatePubSubStore(redisTemplate, listenerContainer, getNodeId());
-    }
-
-    @Override
-    public PubSubStore pubSubStore() {
-        return pubSubStore;
-    }
-
-    @Override
-    public <K, V> Map<K, V> createMap(String name) {
-        BoundHashOperations<String, K, V> boundHashOperations = redisTemplate.boundHashOps(name);
-        return boundHashOperations.entries();
-    }
-
-    @Override
-    public Store createStore(UUID sessionId) {
-        return new RedisTemplateStore(sessionId, redisTemplate);
-    }
-
-    @Override
-    public void shutdown() {
-
+        super(redisTemplate, listenerContainer);
     }
 }

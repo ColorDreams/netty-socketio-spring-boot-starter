@@ -209,15 +209,19 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.SpringAnnotationScanner;
 import com.corundumstudio.socketio.listener.ExceptionListener;
 import com.corundumstudio.socketio.store.StoreFactory;
+import io.github.deersunny.socketio.spring.LifecycleSocketIOServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Role;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -225,6 +229,7 @@ import java.util.List;
 /**
  * SocketIOServer 自动配置
  * SocketIOServer autoconfiguration.
+ *
  * @author 秋辞未寒
  */
 @Slf4j
@@ -232,15 +237,17 @@ import java.util.List;
 @ConditionalOnClass({SocketIOServer.class, SpringAnnotationScanner.class})
 @ConditionalOnProperty(prefix = NettySocketIOServerProperties.PREFIX, value = "enabled", havingValue = "true")
 @EnableConfigurationProperties({NettySocketIOServerProperties.class})
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class NettySocketIOServerAutoConfiguration {
 
-    @Bean(initMethod = "start", destroyMethod = "stop")
+    @Bean
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public SocketIOServer socketIOServer(NettySocketIOServerProperties config,
-            @Autowired(required = false) AuthorizationListener authorizationListener,
-            @Autowired(required = false) ExceptionListener exceptionListener,
-            @Autowired(required = false) StoreFactory storeFactory,
-            @Autowired(required = false) List<NettySocketIOServerAutoConfigurationCustomizer> nettySocketIOServerAutoConfigurationCustomizers) {
+                                         @Autowired(required = false) AuthorizationListener authorizationListener,
+                                         @Autowired(required = false) ExceptionListener exceptionListener,
+                                         @Autowired(required = false) StoreFactory storeFactory,
+                                         @Autowired(required = false) List<NettySocketIOServerAutoConfigurationCustomizer> nettySocketIOServerAutoConfigurationCustomizers) {
 
         if (authorizationListener != null) {
             config.setAuthorizationListener(authorizationListener);
@@ -257,18 +264,18 @@ public class NettySocketIOServerAutoConfiguration {
         // If custom configuration is not empty.
         if (!CollectionUtils.isEmpty(nettySocketIOServerAutoConfigurationCustomizers)) {
             for (NettySocketIOServerAutoConfigurationCustomizer customizer : nettySocketIOServerAutoConfigurationCustomizers) {
-                log.info("Initialize the SocketIOServer using [{}].",customizer.getClass().getName());
+                log.info("Initialize the SocketIOServer using [{}].", customizer.getClass().getName());
                 customizer.customize(config);
             }
         }
 
-        return new SocketIOServer(config);
+        return new LifecycleSocketIOServer(config, config.isAutoStartupServer());
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(SocketIOServer.class)
-    public static SpringAnnotationScanner springAnnotationScanner(SocketIOServer socketIOServer) {
+    public SpringAnnotationScanner springAnnotationScanner(SocketIOServer socketIOServer) {
         return new SpringAnnotationScanner(socketIOServer);
     }
 

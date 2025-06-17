@@ -211,34 +211,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.util.UUID;
 
 /**
+ * @deprecated This class will be removed in the next version,please use {@link io.github.deersunny.socketio.spring.store.redis.RedisTemplateStore}
  * @author 秋辞未寒
  */
-@SuppressWarnings("unchecked")
-public class RedisTemplateStore implements Store {
-
-    private final BoundHashOperations<String, String, Object> boundHashOperations;
+@Deprecated
+public class RedisTemplateStore extends io.github.deersunny.socketio.spring.store.redis.RedisTemplateStore {
 
     public RedisTemplateStore(UUID sessionId, RedisTemplate<String, Object> redisTemplate) {
-        boundHashOperations = redisTemplate.boundHashOps(sessionId.toString());
-    }
-
-    @Override
-    public void set(String key, Object val) {
-        boundHashOperations.put(key, val);
-    }
-
-    @Override
-    public <T> T get(String key) {
-        return (T) boundHashOperations.get(key);
-    }
-
-    @Override
-    public boolean has(String key) {
-        return Boolean.TRUE.equals(boundHashOperations.hasKey(key));
-    }
-
-    @Override
-    public void del(String key) {
-        boundHashOperations.delete(key);
+        super(sessionId, redisTemplate);
     }
 }

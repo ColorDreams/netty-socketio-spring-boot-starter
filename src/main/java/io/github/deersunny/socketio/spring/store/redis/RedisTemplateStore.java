@@ -202,20 +202,43 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package io.github.deersunny.socketio.store;
+package io.github.deersunny.socketio.spring.store.redis;
 
+import com.corundumstudio.socketio.store.Store;
+import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+
+import java.util.UUID;
 
 /**
- * @deprecated This class will be removed in the next version,please use {@link io.github.deersunny.socketio.spring.store.redis.RedisTemplatePubSubStore}
- *
  * @author 秋辞未寒
  */
-@Deprecated
-public class RedisTemplatePubSubStore extends io.github.deersunny.socketio.spring.store.redis.RedisTemplatePubSubStore {
+@SuppressWarnings("unchecked")
+public class RedisTemplateStore implements Store {
 
-    public RedisTemplatePubSubStore(RedisTemplate<String, Object> redisTemplate, RedisMessageListenerContainer redisMessageListenerContainer, Long nodeId) {
-        super(redisTemplate, redisMessageListenerContainer, nodeId);
+    private final BoundHashOperations<String, String, Object> boundHashOperations;
+
+    public RedisTemplateStore(UUID sessionId, RedisTemplate<String, Object> redisTemplate) {
+        boundHashOperations = redisTemplate.boundHashOps(sessionId.toString());
+    }
+
+    @Override
+    public void set(String key, Object val) {
+        boundHashOperations.put(key, val);
+    }
+
+    @Override
+    public <T> T get(String key) {
+        return (T) boundHashOperations.get(key);
+    }
+
+    @Override
+    public boolean has(String key) {
+        return Boolean.TRUE.equals(boundHashOperations.hasKey(key));
+    }
+
+    @Override
+    public void del(String key) {
+        boundHashOperations.delete(key);
     }
 }

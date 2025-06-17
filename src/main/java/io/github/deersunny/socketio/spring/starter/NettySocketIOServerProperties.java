@@ -207,16 +207,30 @@ package io.github.deersunny.socketio.spring.starter;
 import com.corundumstudio.socketio.Configuration;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Role;
 
 /**
  * SocketIOServer 配置属性类
  * SocketIOServer Config properties
+ *
  * @author 秋辞未寒
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(NettySocketIOServerProperties.PREFIX)
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class NettySocketIOServerProperties extends Configuration {
     public static final String PREFIX = "socketio.server";
+
+    /**
+     * 是否自动启动 SocketIO 服务
+     * Whether to start SocketIO server automatically
+     *
+     * <br>
+     * TODO 仅对 {@link io.github.deersunny.socketio.spring.LifecycleSocketIOServer } 有效。
+     *      only for {@link io.github.deersunny.socketio.spring.LifecycleSocketIOServer }.
+     */
+    private boolean autoStartupServer = true;
 }

@@ -202,20 +202,81 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package io.github.deersunny.socketio.store;
+package io.github.deersunny.socketio.spring.store.redis;
 
+import com.corundumstudio.socketio.store.pubsub.PubSubListener;
+import com.corundumstudio.socketio.store.pubsub.PubSubMessage;
+import com.corundumstudio.socketio.store.pubsub.PubSubStore;
+import com.corundumstudio.socketio.store.pubsub.PubSubType;
+import io.netty.util.internal.PlatformDependent;
+import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentMap;
+
 /**
- * @deprecated This class will be removed in the next version,please use {@link io.github.deersunny.socketio.spring.store.redis.RedisTemplatePubSubStore}
- *
  * @author 秋辞未寒
  */
-@Deprecated
-public class RedisTemplatePubSubStore extends io.github.deersunny.socketio.spring.store.redis.RedisTemplatePubSubStore {
+@SuppressWarnings("unchecked")
+public class RedisTemplatePubSubStore implements PubSubStore {
+
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    private final RedisMessageListenerContainer redisMessageListenerContainer;
+
+    private final Long nodeId;
+
+    private final ConcurrentMap<String, Queue<MessageListener>> queues = PlatformDependent.newConcurrentHashMap();
 
     public RedisTemplatePubSubStore(RedisTemplate<String, Object> redisTemplate, RedisMessageListenerContainer redisMessageListenerContainer, Long nodeId) {
-        super(redisTemplate, redisMessageListenerContainer, nodeId);
+        this.redisTemplate = redisTemplate;
+        this.redisMessageListenerContainer = redisMessageListenerContainer;
+        this.nodeId = nodeId;
+    }
+
+    @Override
+    public void publish(PubSubType type, PubSubMessage msg) {
+        msg.setNodeId(nodeId);
+        redisTemplate.convertAndSend(type.toString(), msg);
+    }
+
+    @Override
+    public <T extends PubSubMessage> void subscribe(PubSubType type, PubSubListener<T> listener, Class<T> clazz) {
+        String name = type.toString();
+        MessageListener messageListener = (message, bytes) -> {
+            PubSubMessage msg = (PubSubMessage) redisTemplate.getValueSerializer().deserialize(message.getBody());
+            if (msg != null && nodeId.equals(msg.getNodeId())) {
+                listener.onMessage((T) msg);
+            }
+        };
+
+        redisMessageListenerContainer.addMessageListener(messageListener, new ChannelTopic(name));
+        Queue<MessageListener> queue = queues.get(name);
+        if (queue == null) {
+            queue = new ConcurrentLinkedDeque<>();
+            Queue<MessageListener> oldQueue = queues.putIfAbsent(name, queue);
+            if (oldQueue != null) {
+                queue = oldQueue;
+            }
+        }
+        queue.add(messageListener);
+    }
+
+    @Override
+    public void unsubscribe(PubSubType type) {
+        String name = type.toString();
+        Queue<MessageListener> queue = queues.remove(name);
+        for (MessageListener listener : queue) {
+            redisMessageListenerContainer.removeMessageListener(listener);
+        }
+    }
+
+    @Override
+    public void shutdown() {
+
     }
 }
